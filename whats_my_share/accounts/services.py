@@ -6,13 +6,26 @@ from rest_framework.authtoken.models import Token
 from .models import User, Group
 from .constants import (
     INCORRECT_PASSWORD,
-    INCORRECT_USERNAME,
+    USERNAME_DOES_NOT_EXIST,
+    USERNAME_ALREADY_EXISTS,
     GROUP_ALREADY_EXISTS,
     GROUP_DOES_NOT_EXISTS,
 )
 
 
 class UserService:
+    def validate_usernames(usernames):
+        users = User.objects.filter(username__in=usernames)
+
+        if users.count() != len(usernames):
+            raise ParseError(USERNAME_DOES_NOT_EXIST)
+
+        return users
+
+    def verify_for_existance(username):
+        if User.objects.filter(username=username).exists():
+            raise ParseError(USERNAME_ALREADY_EXISTS)
+
     def generate_token(user):
         Token.objects.create(user=user)
 
@@ -24,9 +37,11 @@ class UserService:
                 return auth_token.last().key
 
             raise ParseError(INCORRECT_PASSWORD)
-        raise ParseError(INCORRECT_USERNAME)
+        raise ParseError(USERNAME_DOES_NOT_EXIST)
 
     def register_user(validated_data):
+        UserService.verify_for_existance(username=validated_data['username'])
+
         user = User.objects.create_user(
             username=validated_data['username'],
             first_name=validated_data['first_name'],
@@ -48,13 +63,22 @@ class UserService:
 
 
 class GroupService:
+    def validate_group(name):
+        group = Group.objects.filter(name=name).last()
+
+        if group is None:
+            raise ParseError(GROUP_DOES_NOT_EXISTS)
+        return group
+
+    def verify_for_existance(name):
+        if Group.objects.filter(name=name).exists():
+            raise ParseError(GROUP_ALREADY_EXISTS)
+
     def create_group(validated_data):
         name = validated_data['name']
         owner = validated_data['owner']
 
-        if Group.objects.filter(name=name).exists():
-            raise ParseError(GROUP_ALREADY_EXISTS)
-
+        GroupService.verify_for_existance(name=name)
         Group.objects.create(name=name, owner=owner)
 
     def add_members(validated_data):
@@ -62,14 +86,11 @@ class GroupService:
         owner = validated_data['owner']
         member_usernames = validated_data['members']
 
-        if not Group.objects.filter(name=name).exists():
-            raise ParseError(GROUP_DOES_NOT_EXISTS)
+        group = GroupService.validate_group(name=name)
+        if group.owner != owner:
+            raise ParseError()
 
-        new_members = User.objects.filter(username__in=member_usernames)
-        if new_members.count() != len(member_usernames):
-            raise ParseError(INCORRECT_USERNAME)
-
-        group = Group.objects.get(name=name, owner=owner)
+        new_members = UserService.validate_usernames(member_usernames)
         group.members.add(*new_members)
 
     def remove_members(validated_data):
@@ -77,12 +98,9 @@ class GroupService:
         owner = validated_data['owner']
         member_usernames = validated_data['members']
 
-        if not Group.objects.filter(name=name).exists():
-            raise ParseError(GROUP_DOES_NOT_EXISTS)
+        group = GroupService.validate_group(name=name)
+        if group.owner != owner:
+            raise ParseError()
 
-        remove_members = User.objects.filter(username__in=member_usernames)
-        if remove_members.count() != len(member_usernames):
-            raise ParseError(INCORRECT_USERNAME)
-
-        group = Group.objects.get(name=name, owner=owner)
+        remove_members = UserService.validate_usernames(member_usernames)
         group.members.remove(*remove_members)
