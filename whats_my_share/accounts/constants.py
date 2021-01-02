@@ -3,17 +3,22 @@ INCORRECT_PASSWORD = {
     'detail': 'Provided password is incorrect.',
 }
 
-INCORRECT_USERNAME = {
+USERNAME_DOES_NOT_EXIST = {
     'code': 'USR_400_2',
     'detail': 'Provided username(s) are incorrect.',
 }
 
-GROUP_ALREADY_EXISTS = {
+USERNAME_ALREADY_EXISTS = {
     'code': 'USR_400_3',
-    'detail': 'Provided group already exists.',
+    'detail': 'Provided username(s) are incorrect.',
 }
 
 GROUP_DOES_NOT_EXISTS = {
-    'code': 'USR_400_4',
+    'code': 'USR_400_5',
     'detail': 'Provided group does not exists.',
+}
+
+GROUP_ALREADY_EXISTS = {
+    'code': 'USR_400_4',
+    'detail': 'Provided group already exists.',
 }
