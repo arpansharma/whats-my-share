@@ -7,6 +7,7 @@ from rest_framework.viewsets import GenericViewSet
 
 # app level imports
 from .serializers import CreateSerializer
+from .services import ExpenseService
 
 
 class ExpenseViewSet(GenericViewSet):
@@ -25,6 +26,8 @@ class ExpenseViewSet(GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid() is False:
             raise ParseError(serializer.errors)
+
+        ExpenseService.add_an_expense(validated_data=serializer.validated_data)
 
         return Response({
             'message': 'Expense/Bill has been added successfully.',
