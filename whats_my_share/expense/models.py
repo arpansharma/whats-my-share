@@ -30,3 +30,20 @@ class Expense(models.Model):
         app_label = 'expense'
         db_table = 'api_expense'
         verbose_name_plural = 'Expenses'
+
+
+class LedgerTimeline:
+    EVENT_CHOICES = (
+        ('expense', 'Shared an Expense'),
+        ('settlement', 'Did a Settlement'),
+    )
+
+    event = models.CharField(max_length=16, choices=EVENT_CHOICES)
+    credit_to = models.ForeignKey('accounts.user', on_delete=models.PROTECT)
+    debit_from = models.ForeignKey('accounts.user', on_delete=models.PROTECT)
+    amount = models.DecimalField(max_digits=11, decimal_places=2)
+    expense = models.ForeignKey('expense.Expense', on_delete=models.PROTECT)
+    created_by = models.ForeignKey('accounts.User', on_delete=models.PROTECT)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
