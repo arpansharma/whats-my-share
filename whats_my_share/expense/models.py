@@ -3,11 +3,14 @@ from django.db import models
 
 
 class Expense(models.Model):
+    equally = 'equally'
+    by_percentage = 'by_percentage'
+    by_amount = 'by_amount'
 
     SPLITTING_CATEGORY_CHOICES = (
-        ('equally', 'Equally'),
-        ('by_percentage', 'By Percentage'),
-        ('by_amount', 'By Amount'),
+        (equally, 'Equally'),
+        (by_percentage, 'By Percentage'),
+        (by_amount, 'By Amount'),
     )
 
     title = models.CharField(max_length=64, unique=True)
@@ -33,9 +36,11 @@ class Expense(models.Model):
 
 
 class LedgerTimeline(models.Model):
+    expense = 'expense'
+    settlement = 'settlement'
     EVENT_CHOICES = (
-        ('expense', 'Shared an Expense'),
-        ('settlement', 'Did a Settlement'),
+        (expense, 'Shared an Expense'),
+        (settlement, 'Did a Settlement'),
     )
 
     event = models.CharField(max_length=16, choices=EVENT_CHOICES)

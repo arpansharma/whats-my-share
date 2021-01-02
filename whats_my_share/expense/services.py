@@ -1,7 +1,7 @@
 # django / rest-framework imports
 
 # project level imports
-from account.services import UserService, GroupService
+from accounts.services import UserService, GroupService
 
 # app level imports
 from .models import Expense, LedgerTimeline
@@ -20,14 +20,14 @@ class ExpenseService:
         # We need to check if the group exists
         GroupService.validate_group(name=group_name)
 
-        if splitting_category == Expense.SPLITTING_CATEGORY_CHOICES.equally:
+        if splitting_category == Expense.equally:
             ExpenseService.add_equally_distributed_expense(
                 validated_data=validated_data,
                 user=user,
             )
         elif splitting_category in [
-            Expense.SPLITTING_CATEGORY_CHOICES.by_percentage,
-            Expense.SPLITTING_CATEGORY_CHOICES.by_amount,
+            Expense.by_percentage,
+            Expense.by_amount,
         ]:
             ExpenseService.add_unequally_distributed_expense(
                 validated_data=validated_data,
@@ -47,7 +47,7 @@ class ExpenseService:
         create_ledger_timeline(
             expense=expense,
             username_share_mapping=username_share_mapping,
-            event=LedgerTimeline.EVENT_CHOICES.expense,
+            event=LedgerTimeline.expense,
             user=user,
         )
 

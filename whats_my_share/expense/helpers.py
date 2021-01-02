@@ -40,7 +40,7 @@ def validate_unequally_distributed_expense(validated_data):
     splitting_category = validated_data['splitting_category']
     pre_defined_split = validated_data['pre_defined_split']
 
-    if splitting_category == Expense.SPLITTING_CATEGORY_CHOICES.by_percentage:
+    if splitting_category == Expense.by_percentage:
         username_share_mapping = {}
         for user in pre_defined_split:
             split_value = round(
@@ -49,7 +49,7 @@ def validate_unequally_distributed_expense(validated_data):
 
             username_share_mapping[user['username']] = split_value
 
-    if splitting_category == Expense.SPLITTING_CATEGORY_CHOICES.by_amount:
+    if splitting_category == Expense.by_amount:
         username_share_mapping = {
             user['username']: user['split'] for user in pre_defined_split
         }
