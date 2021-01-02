@@ -9,15 +9,15 @@ class UserService:
     def generate_token(user):
         Token.objects.create(user=user)
 
-    def retrieve_token(username):
-        auth_token = Token.objects.filter(user__username=username)
-        if auth_token is None:
-            return None
-
-        return auth_token.last().key
+    def retrieve_token(username, password):
+        user = User.objects.filter(username=username).last()
+        if user:
+            if user.check_password(password):
+                auth_token = Token.objects.filter(user__username=username)
+                return auth_token.last().key
 
     def register_user(validated_data):
-        user = User.objects.create(
+        user = User.objects.create_user(
             username=validated_data['username'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
@@ -31,5 +31,7 @@ class UserService:
 
     def authenticate_user(validated_data):
         username = validated_data['username']
-        auth_token = UserService.retrieve_token(username=username)
+        password = validated_data['password']
+
+        auth_token = UserService.retrieve_token(username=username, password=password)
         return auth_token
