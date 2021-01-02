@@ -20,8 +20,8 @@ class User(AbstractUser):
 
 class Group(models.Model):
     name = models.CharField(max_length=64, unique=True)
-    owner = models.ForeignKey('accounts.user', related_name="owner_user", on_delete=models.PROTECT)
-    members = models.ManyToManyField('accounts.User', related_name='members_users')
+    owner = models.ForeignKey('accounts.User', related_name="owner_of_group", on_delete=models.PROTECT)
+    members = models.ManyToManyField('accounts.User', related_name='member_in_group')
     profile_picure = models.URLField(max_length=512, null=True, default=None)
 
     is_active = models.BooleanField(default=True)
