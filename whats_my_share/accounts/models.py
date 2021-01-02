@@ -19,7 +19,7 @@ class User(AbstractUser):
 
 
 class Group(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
     owner = models.ForeignKey('accounts.user', related_name="owner_user", on_delete=models.PROTECT)
     members = models.ManyToManyField('accounts.User', related_name='members_users')
     profile_picure = models.URLField(max_length=512, null=True, default=None)

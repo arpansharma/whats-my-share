@@ -8,6 +8,7 @@ from accounts import views as user_views
 
 router = SimpleRouter()
 router.register(r'accounts/user', user_views.UserViewSet, basename='accounts')
+router.register(r'accounts/group', user_views.GroupViewSet, basename='accounts')
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
