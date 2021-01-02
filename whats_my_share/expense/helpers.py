@@ -5,7 +5,7 @@ from rest_framework.exceptions import ParseError
 from accounts.services import UserService
 
 # app level imports
-from .models import Expense
+from .models import Expense, LedgerTimeline
 
 
 def validate_equally_distributed_expense(validated_data):
@@ -68,3 +68,19 @@ def validate_unequally_distributed_expense(validated_data):
         raise ParseError()
 
     return username_share_mapping
+
+
+def create_ledger_timeline(expense, username_share_mapping, event, user):
+
+    for username, split in username_share_mapping.keys():
+        debit_from = UserService.retrieve_user_objects(usernames=list(username)).last()
+        amount = split
+
+        LedgerTimeline.objects.create(
+            event=event,
+            credit_to=user,
+            debit_from=debit_from,
+            amount=amount,
+            expense=expense,
+            created_by=user,
+        )

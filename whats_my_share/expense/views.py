@@ -27,7 +27,10 @@ class ExpenseViewSet(GenericViewSet):
         if serializer.is_valid() is False:
             raise ParseError(serializer.errors)
 
-        ExpenseService.add_an_expense(validated_data=serializer.validated_data)
+        ExpenseService.add_an_expense(
+            validated_data=serializer.validated_data,
+            user=request.user,
+        )
 
         return Response({
             'message': 'Expense/Bill has been added successfully.',
