@@ -26,6 +26,9 @@ class UserService:
         if User.objects.filter(username=username).exists():
             raise ParseError(USERNAME_ALREADY_EXISTS)
 
+    def retrieve_user_objects(usernames):
+        return UserService.validate_usernames(usernames=usernames)
+
     def generate_token(user):
         Token.objects.create(user=user)
 
@@ -73,6 +76,9 @@ class GroupService:
     def verify_for_existance(name):
         if Group.objects.filter(name=name).exists():
             raise ParseError(GROUP_ALREADY_EXISTS)
+
+    def retrieve_group_object(name):
+        return GroupService.validate_group(name=name)
 
     def create_group(validated_data):
         name = validated_data['name']

@@ -34,3 +34,26 @@ class CreateSerializer(serializers.Serializer):
     group = serializers.CharField(max_length=64, allow_null=False, allow_blank=False)
     notes = serializers.CharField(max_length=1024, required=False, allow_null=False, allow_blank=False)
     comments = serializers.CharField(max_length=1024, required=False, allow_null=True, allow_blank=False)
+
+    def validate(self, data):
+        title = data['title']
+        amount = data['amount']
+        paid_by = data['paid_by']
+        splitting_category = data['splitting_category']
+        shared_with_users = data.get('shared_with_users', [])
+        pre_defined_split = data.get('pre_defined_split', [])
+        group = data['group']
+        notes = data.get('notes', None)
+        comments = data.get('comments', None)
+
+        return {
+            'title': title,
+            'amount': amount,
+            'paid_by': paid_by,
+            'splitting_category': splitting_category,
+            'shared_with_users': shared_with_users,
+            'pre_defined_split': pre_defined_split,
+            'group': group,
+            'notes': notes,
+            'comments': comments,
+        }
