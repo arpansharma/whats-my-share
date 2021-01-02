@@ -1,0 +1,13 @@
+[flake8]
+max-line-length = 99
+max-complexity = 18
+ignore = E203, E266, E501, W503, C901
+select = B,C,E,F,W,T4,B9
+exclude =
+    # ignore settings
+    whats_my_share/whats_my_share/default_settings.py,
+    whats_my_share/whats_my_share/settings.py,
+    # ignore migrations
+    */migrations/*
+    # ignore thrid-party packages
+    */site-packages/*
