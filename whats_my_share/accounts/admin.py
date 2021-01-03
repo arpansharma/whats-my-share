@@ -1,3 +1,4 @@
+# django/rest-framework imports
 from django.contrib import admin
 
 # app level imports
@@ -12,6 +13,8 @@ class UserAdmin(admin.ModelAdmin):
         'first_name',
         'last_name',
         'email',
+        'created_at',
+        'updated_at',
     )
 
 
@@ -19,8 +22,12 @@ class UserAdmin(admin.ModelAdmin):
 class GroupAdmin(admin.ModelAdmin):
     list_display = (
         'id',
-        # 'username',
-        # 'first_name',
-        # 'last_name',
-        # 'email',
+        'name',
+        'owner',
+        'get_members',
+        'created_at',
+        'updated_at',
     )
+
+    def get_members(self, obj):
+        return ", ".join([user.username for user in obj.members.all()])

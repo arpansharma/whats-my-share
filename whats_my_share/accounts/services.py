@@ -10,6 +10,7 @@ from .constants import (
     USERNAME_ALREADY_EXISTS,
     GROUP_ALREADY_EXISTS,
     GROUP_DOES_NOT_EXISTS,
+    MEMBERS_NOT_IN_GROUP,
 )
 
 
@@ -76,6 +77,10 @@ class GroupService:
     def verify_for_existance(name):
         if Group.objects.filter(name=name).exists():
             raise ParseError(GROUP_ALREADY_EXISTS)
+
+    def verify_members_in_group(name, members):
+        if not Group.objects.filter(name=name, members__in=members).exists():
+            raise ParseError(MEMBERS_NOT_IN_GROUP)
 
     def retrieve_group_object(name):
         return GroupService.validate_group(name=name)
