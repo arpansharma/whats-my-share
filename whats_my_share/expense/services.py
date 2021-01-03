@@ -15,7 +15,7 @@ from .constants import INVALID_TRANSACTION
 
 class ExpenseService:
     def add_an_expense(validated_data, user):
-        group_name = validated_data['group']
+        group_name = validated_data['group_name']
         splitting_category = validated_data['splitting_category']
 
         # We need to check if the group exists
@@ -57,13 +57,14 @@ class ExpenseService:
     def create_expense(validated_data, username_share_mapping, user):
         """
         """
-        paid_by = UserService.retrieve_user_objects(
-            usernames=[validated_data['paid_by']],
-        ).last()
+        paid_by = validated_data['paid_by']
+        group_name = validated_data['group_name']
+
+        paid_by = UserService.retrieve_user_objects(usernames=[paid_by]).last()
         shared_with_users = UserService.retrieve_user_objects(
             usernames=list(username_share_mapping.keys()),
         )
-        group = GroupService.retrieve_group_object(name=validated_data['group'])
+        group = GroupService.retrieve_group_object(name=group_name)
 
         expense = Expense.objects.create(
             title=validated_data['title'],
@@ -110,10 +111,12 @@ class ExpenseService:
         settled_by_username = validated_data['settled_by']
         paying_to_username = validated_data['paying_to']
         amount = validated_data['amount']
+        group_name = validated_data['group_name']
 
         if settled_by_username == paying_to_username:
             raise ParseError(INVALID_TRANSACTION)
 
+        group = GroupService.retrieve_group_object(name=group_name)
         settled_by = UserService.retrieve_user_objects([settled_by_username]).last()
         paying_to = UserService.retrieve_user_objects([paying_to_username]).last()
 
@@ -123,7 +126,7 @@ class ExpenseService:
             debit_from=settled_by,
             amount=amount,
             expense=None,
-            group=None,
+            group=group,
             created_by=user,
         )
 
@@ -135,12 +138,14 @@ class ExpenseService:
         ledger_entry = Ledger.objects.filter(
             credit_to=lt_object.credit_to,
             debit_from=lt_object.debit_from,
+            group=lt_object.group,
         ).last()
 
         if ledger_entry is None:
             ledger_entry = Ledger.objects.create(
                 credit_to=lt_object.credit_to,
                 debit_from=lt_object.debit_from,
+                group=lt_object.group,
             )
 
         return ledger_entry

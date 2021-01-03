@@ -50,6 +50,7 @@ class LedgerAdmin(admin.ModelAdmin):
         'credit_to',
         'debit_from',
         'amount',
+        'group',
         'created_at',
         'updated_at',
     )
