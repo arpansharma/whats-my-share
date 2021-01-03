@@ -3,24 +3,25 @@ from django.db import models
 
 
 class Expense(models.Model):
-    equally = 'equally'
-    by_percentage = 'by_percentage'
-    by_amount = 'by_amount'
+    EQUALLY = 'equally'
+    BY_PERCENTAGE = 'by_percentage'
+    BY_AMOUNT = 'by_amount'
 
     SPLITTING_CATEGORY_CHOICES = (
-        (equally, 'Equally'),
-        (by_percentage, 'By Percentage'),
-        (by_amount, 'By Amount'),
+        (EQUALLY, 'Equally'),
+        (BY_PERCENTAGE, 'By Percentage'),
+        (BY_AMOUNT, 'By Amount'),
     )
 
-    title = models.CharField(max_length=64, unique=True)
+    title = models.CharField(max_length=64)
     amount = models.DecimalField(max_digits=11, decimal_places=2)
     paid_by = models.ForeignKey('accounts.user', related_name="paid_for_expense", on_delete=models.PROTECT)
     splitting_category = models.CharField(max_length=16, choices=SPLITTING_CATEGORY_CHOICES)
     shared_with_users = models.ManyToManyField('accounts.User', related_name='part_of_expense')
     group = models.ForeignKey('accounts.Group', related_name="expense", on_delete=models.PROTECT)
-    notes = models.TextField()
-    comments = models.TextField()
+    notes = models.TextField(null=True, default=None)
+    comments = models.TextField(null=True, default=None)
+    created_by = models.ForeignKey('accounts.User', related_name="created_expense", on_delete=models.PROTECT)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -36,18 +37,19 @@ class Expense(models.Model):
 
 
 class LedgerTimeline(models.Model):
-    expense = 'expense'
-    settlement = 'settlement'
+    EXPENSE = 'expense'
+    SETTLEMENT = 'settlement'
     EVENT_CHOICES = (
-        (expense, 'Shared an Expense'),
-        (settlement, 'Did a Settlement'),
+        (EXPENSE, 'Shared an Expense'),
+        (SETTLEMENT, 'Did a Settlement'),
     )
 
     event = models.CharField(max_length=16, choices=EVENT_CHOICES)
     credit_to = models.ForeignKey('accounts.user', related_name="credit_to_lt", on_delete=models.PROTECT)
     debit_from = models.ForeignKey('accounts.user', related_name="debit_from_lt", on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=11, decimal_places=2)
-    expense = models.ForeignKey('expense.Expense', related_name="expense_lt", on_delete=models.PROTECT)
+    expense = models.ForeignKey('expense.Expense', related_name="expense_lt", on_delete=models.PROTECT, null=True)
+    group = models.ForeignKey('accounts.Group', related_name="group_lt", on_delete=models.PROTECT, null=True)
     created_by = models.ForeignKey('accounts.User', related_name="created_by_lt", on_delete=models.PROTECT)
 
     created_at = models.DateTimeField(auto_now_add=True)
