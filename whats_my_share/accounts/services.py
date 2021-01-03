@@ -11,6 +11,7 @@ from .constants import (
     GROUP_ALREADY_EXISTS,
     GROUP_DOES_NOT_EXISTS,
     MEMBERS_NOT_IN_GROUP,
+    PERMISSION_DENIED,
 )
 
 
@@ -99,7 +100,7 @@ class GroupService:
 
         group = GroupService.validate_group(name=name)
         if group.owner != owner:
-            raise ParseError()
+            raise ParseError(PERMISSION_DENIED)
 
         new_members = UserService.validate_usernames(member_usernames)
         group.members.add(*new_members)
@@ -111,7 +112,7 @@ class GroupService:
 
         group = GroupService.validate_group(name=name)
         if group.owner != owner:
-            raise ParseError()
+            raise ParseError(PERMISSION_DENIED)
 
         remove_members = UserService.validate_usernames(member_usernames)
         group.members.remove(*remove_members)
