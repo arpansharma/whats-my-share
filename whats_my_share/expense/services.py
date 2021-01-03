@@ -1,4 +1,5 @@
 # django / rest-framework imports
+from django.db.models import Sum
 from rest_framework.exceptions import ParseError
 
 # project level imports
@@ -149,3 +150,33 @@ class ExpenseService:
             )
 
         return ledger_entry
+
+    def fetch_balance(validated_data, user):
+        group_name = validated_data['group_name']
+
+        if group_name is not None:
+            you_owe = Ledger.objects.filter(
+                debit_from=user, group__name=group_name,
+            ).values('credit_to__username').annotate(Sum('amount'))
+
+            response = []
+            for record in you_owe:
+                mapping = {
+                    'username': record['credit_to__username'],
+                    'you_owe': record['amount__sum'],
+                }
+                response.append(mapping)
+        else:
+            you_owe = Ledger.objects.filter(
+                debit_from=user,
+            ).values('credit_to__username').annotate(Sum('amount'))
+
+            response = []
+            for record in you_owe:
+                mapping = {
+                    'username': record['credit_to__username'],
+                    'you_owe': record['amount__sum'],
+                }
+                response.append(mapping)
+
+        return response
