@@ -1,3 +1,6 @@
+# python imports
+from decimal import Decimal
+
 # django/rest-framework imports
 from rest_framework.exceptions import ParseError
 
@@ -6,6 +9,7 @@ from accounts.services import UserService, GroupService
 
 # app level imports
 from .models import Expense
+from .constants import INVALID_EXPENSE_TOTAL
 
 
 def validate_equally_dist_expense(validated_data):
@@ -46,7 +50,7 @@ def validate_unequally_dist_expense(validated_data):
         username_share_mapping = {}
         for user in pre_defined_split:
             split_value = round(
-                (amount * (int(user['split']) / 100)), 2,
+                (amount * Decimal((int(user['split']) / 100))), 2,
             )
 
             username_share_mapping[user['username']] = split_value
@@ -60,13 +64,13 @@ def validate_unequally_dist_expense(validated_data):
     total_share = 0
     for username, share in username_share_mapping.items():
         usernames.append(username)
-        total_share += share
+        total_share += round(float(share), 2)
 
     # We need to check if usernames provided are registered
     UserService.validate_usernames(usernames=usernames)
 
     # We need to check if share of all people equals bill amount
     if total_share < amount:
-        raise ParseError()
+        raise ParseError(INVALID_EXPENSE_TOTAL)
 
     return username_share_mapping

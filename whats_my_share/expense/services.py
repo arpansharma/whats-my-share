@@ -1,3 +1,6 @@
+# python imports
+from decimal import Decimal
+
 # django / rest-framework imports
 from django.db.models import Sum
 from rest_framework.exceptions import ParseError
@@ -89,7 +92,7 @@ class ExpenseService:
     def add_expense_in_ledger(expense, username_share_mapping):
         for username, split in username_share_mapping.items():
             debit_from = UserService.retrieve_user_objects(usernames=[username]).last()
-            amount = split
+            amount = Decimal(split)
 
             if debit_from == expense.paid_by:
                 continue
