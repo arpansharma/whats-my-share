@@ -31,7 +31,7 @@ class CreateSerializer(serializers.Serializer):
         required=False,
     )
 
-    group = serializers.CharField(max_length=64, allow_null=False, allow_blank=False)
+    group_name = serializers.CharField(max_length=64, allow_null=False, allow_blank=False)
     notes = serializers.CharField(max_length=1024, required=False, allow_null=False, allow_blank=False)
     comments = serializers.CharField(max_length=1024, required=False, allow_null=True, allow_blank=False)
 
@@ -42,7 +42,7 @@ class CreateSerializer(serializers.Serializer):
         splitting_category = data['splitting_category']
         shared_with_users = data.get('shared_with_users', [])
         pre_defined_split = data.get('pre_defined_split', [])
-        group = data['group']
+        group_name = data['group_name']
         notes = data.get('notes', None)
         comments = data.get('comments', None)
 
@@ -53,7 +53,7 @@ class CreateSerializer(serializers.Serializer):
             'splitting_category': splitting_category,
             'shared_with_users': shared_with_users,
             'pre_defined_split': pre_defined_split,
-            'group': group,
+            'group_name': group_name,
             'notes': notes,
             'comments': comments,
         }
@@ -66,3 +66,18 @@ class SettleBalanceSerializer(serializers.Serializer):
     settled_by = serializers.CharField(max_length=150, allow_null=False, allow_blank=False)
     paying_to = serializers.CharField(max_length=150, allow_null=False, allow_blank=False)
     amount = serializers.DecimalField(max_digits=11, decimal_places=2)
+    group_name = serializers.CharField(max_length=64, allow_null=False, allow_blank=False)
+
+
+class FetchBalanceSerializer(serializers.Serializer):
+    """
+    This will validate the data required to fetch balance for a group
+    """
+    group_name = serializers.CharField(max_length=64, allow_null=False, allow_blank=False, required=False)
+
+    def validate(self, data):
+        group_name = data.get('group_name', None)
+
+        return {
+            'group_name': group_name,
+        }

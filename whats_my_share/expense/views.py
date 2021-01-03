@@ -8,18 +8,23 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
 # app level imports
-from .serializers import CreateSerializer, SettleBalanceSerializer
+from .serializers import (
+    CreateSerializer,
+    SettleBalanceSerializer,
+    FetchBalanceSerializer,
+)
 from .services import ExpenseService
 
 
 class ExpenseViewSet(GenericViewSet):
-    http_method_names = ['post']
+    http_method_names = ['get', 'post']
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     serializers = {
         "create": CreateSerializer,
         "settle_balance": SettleBalanceSerializer,
+        "fetch_balance": FetchBalanceSerializer,
     }
 
     def get_serializer_class(self):
@@ -55,3 +60,16 @@ class ExpenseViewSet(GenericViewSet):
         return Response({
             'message': 'Requested settlement has been done',
         })
+
+    @action(methods=['GET'], detail=False, url_path='fetch-balance')
+    def fetch_balance(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.query_params)
+        if serializer.is_valid() is False:
+            raise ParseError(serializer.errors)
+
+        response = ExpenseService.fetch_balance(
+            validated_data=serializer.validated_data,
+            user=request.user,
+        )
+
+        return Response(response)

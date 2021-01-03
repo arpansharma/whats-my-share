@@ -16,13 +16,13 @@ def validate_equally_dist_expense(validated_data):
     """
     amount = validated_data['amount']
     shared_with_users = validated_data['shared_with_users']
-    group = validated_data['group']
+    group_name = validated_data['group_name']
 
     # We need to check if usernames provided are registered
     shared_with_users = UserService.validate_usernames(usernames=shared_with_users)
 
     # We need to check if usernames are part of the group
-    GroupService.verify_members_in_group(name=group, members=shared_with_users)
+    GroupService.verify_members_in_group(name=group_name, members=shared_with_users)
 
     split = round((amount / shared_with_users.count()), 2)
 

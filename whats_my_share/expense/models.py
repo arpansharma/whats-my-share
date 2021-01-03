@@ -49,7 +49,7 @@ class LedgerTimeline(models.Model):
     debit_from = models.ForeignKey('accounts.user', related_name="debit_from_lt", on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=11, decimal_places=2)
     expense = models.ForeignKey('expense.Expense', related_name="expense_lt", on_delete=models.PROTECT, null=True)
-    group = models.ForeignKey('accounts.Group', related_name="group_lt", on_delete=models.PROTECT, null=True)
+    group = models.ForeignKey('accounts.Group', related_name="group_lt", on_delete=models.PROTECT)
     created_by = models.ForeignKey('accounts.User', related_name="created_by_lt", on_delete=models.PROTECT)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -68,6 +68,7 @@ class Ledger(models.Model):
     credit_to = models.ForeignKey('accounts.user', related_name="credit_to_ld", on_delete=models.PROTECT)
     debit_from = models.ForeignKey('accounts.user', related_name="debit_from_ld", on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    group = models.ForeignKey('accounts.Group', related_name="group_ld", on_delete=models.PROTECT)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
