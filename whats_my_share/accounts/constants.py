@@ -14,11 +14,16 @@ USERNAME_ALREADY_EXISTS = {
 }
 
 GROUP_DOES_NOT_EXISTS = {
-    'code': 'USR_400_5',
+    'code': 'USR_400_4',
     'detail': 'Provided group does not exists.',
 }
 
 GROUP_ALREADY_EXISTS = {
-    'code': 'USR_400_4',
+    'code': 'USR_400_5',
     'detail': 'Provided group already exists.',
+}
+
+MEMBERS_NOT_IN_GROUP = {
+    'code': 'USR_400_6',
+    'detail': 'Members involved are not part of the group.',
 }
