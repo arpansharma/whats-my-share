@@ -27,3 +27,8 @@ MEMBERS_NOT_IN_GROUP = {
     'code': 'USR_400_6',
     'detail': 'Members involved are not part of the group.',
 }
+
+PERMISSION_DENIED = {
+    'code': 'USR_400_7',
+    'detail': 'You are not the owner of this group.',
+}

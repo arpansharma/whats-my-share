@@ -7,6 +7,7 @@ Django==2.2
 django-filter==2.4.0
 djangorestframework==3.12.2
 filelock==3.0.12
+gunicorn==20.0.4
 identify==1.5.11
 ipdb==0.13.4
 ipython==7.19.0
