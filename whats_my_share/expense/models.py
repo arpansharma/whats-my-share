@@ -54,3 +54,28 @@ class LedgerTimeline(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.id}'
+
+    class Meta:
+        app_label = 'expense'
+        db_table = 'api_ledger_timeline'
+        verbose_name_plural = 'Ledger Timeline'
+
+
+class Ledger(models.Model):
+    credit_to = models.ForeignKey('accounts.user', related_name="credit_to_ld", on_delete=models.PROTECT)
+    debit_from = models.ForeignKey('accounts.user', related_name="debit_from_ld", on_delete=models.PROTECT)
+    amount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.id}'
+
+    class Meta:
+        app_label = 'expense'
+        db_table = 'api_ledger'
+        verbose_name_plural = 'Ledger'
