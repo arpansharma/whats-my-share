@@ -2,21 +2,27 @@ version: '3.7'
 
 services:
   web:
-    build: ./
-    command: ls && python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./app/:/usr/src/app/
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - 8000:8000
-    env_file:
-      - ./.env.dev
     depends_on:
       - db
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+      - "DATABASE_NAME=shared_expenses"
+      - "DATABASE_USER=admin"
+      - "DATABASE_PASSWORD=1.#fampay@321"
   db:
-    image: postgres:12.0-alpine
+    image: postgres:12
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env.dev
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+      - "POSTGRES_DB=shared_expenses"
+      - "POSTGRES_USER=admin"
+      - "POSTGRES_PASSWORD=1.#fampay@321"
+    ports:
+      - "5432:5432"
 volumes:
   postgres_data:

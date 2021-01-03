@@ -14,3 +14,5 @@ RUN pip install -r requirements.txt
 
 # copy project
 COPY ./whats_my_share ./
+
+ENTRYPOINT ["gunicorn", "whats_my_share.wsgi:application", "--workers=2", "--bind=0.0.0.0:8000"]
