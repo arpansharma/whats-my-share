@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 class CreateSerializer(serializers.Serializer):
     """
-    This will validate the data required to add a new expense
+    This will validate the data required to add a new expense in a group
     """
 
     title = serializers.CharField(max_length=64, allow_null=False, allow_blank=False)
@@ -57,3 +57,12 @@ class CreateSerializer(serializers.Serializer):
             'notes': notes,
             'comments': comments,
         }
+
+
+class SettleBalanceSerializer(serializers.Serializer):
+    """
+    This will validate the data required to settle balance with a user
+    """
+    settled_by = serializers.CharField(max_length=150, allow_null=False, allow_blank=False)
+    paying_to = serializers.CharField(max_length=150, allow_null=False, allow_blank=False)
+    amount = serializers.DecimalField(max_digits=11, decimal_places=2)

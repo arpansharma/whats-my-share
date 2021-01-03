@@ -96,3 +96,21 @@ class ExpenseService:
                 group=expense.group,
                 created_by=expense.created_by,
             )
+
+    def add_settlement_in_ledger(validated_data, user):
+        settled_by_username = validated_data['settled_by']
+        paying_to_username = validated_data['paying_to']
+        amount = validated_data['amount']
+
+        settled_by = UserService.retrieve_user_objects([settled_by_username]).last()
+        paying_to = UserService.retrieve_user_objects([paying_to_username]).last()
+
+        LedgerTimeline.objects.create(
+            event=LedgerTimeline.SETTLEMENT,
+            credit_to=paying_to,
+            debit_from=settled_by,
+            amount=amount,
+            expense=None,
+            group=None,
+            created_by=user,
+        )
