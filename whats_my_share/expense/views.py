@@ -1,4 +1,5 @@
 # django/rest-framework imports
+from django.db import transaction
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
@@ -22,6 +23,7 @@ class ExpenseViewSet(GenericViewSet):
     def get_serializer_class(self):
         return self.serializers[self.action]
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid() is False:
