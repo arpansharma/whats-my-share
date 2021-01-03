@@ -1,14 +1,16 @@
 # django / rest-framework imports
+from rest_framework.exceptions import ParseError
 
 # project level imports
 from accounts.services import UserService, GroupService
 
 # app level imports
-from .models import Expense, LedgerTimeline
+from .models import Expense, LedgerTimeline, Ledger
 from .helpers import (
     validate_equally_dist_expense,
     validate_unequally_dist_expense,
 )
+from .constants import INVALID_TRANSACTION
 
 
 class ExpenseService:
@@ -87,7 +89,10 @@ class ExpenseService:
             debit_from = UserService.retrieve_user_objects(usernames=[username]).last()
             amount = split
 
-            LedgerTimeline.objects.create(
+            if debit_from == expense.paid_by:
+                continue
+
+            lt_object = LedgerTimeline.objects.create(
                 event=LedgerTimeline.EXPENSE,
                 credit_to=expense.paid_by,
                 debit_from=debit_from,
@@ -97,15 +102,22 @@ class ExpenseService:
                 created_by=expense.created_by,
             )
 
+            ledger_entry = ExpenseService.fetch_or_create_ledgre_entry(lt_object=lt_object)
+            ledger_entry.amount = ledger_entry.amount + amount
+            ledger_entry.save(update_fields=['amount', 'updated_at'])
+
     def add_settlement_in_ledger(validated_data, user):
         settled_by_username = validated_data['settled_by']
         paying_to_username = validated_data['paying_to']
         amount = validated_data['amount']
 
+        if settled_by_username == paying_to_username:
+            raise ParseError(INVALID_TRANSACTION)
+
         settled_by = UserService.retrieve_user_objects([settled_by_username]).last()
         paying_to = UserService.retrieve_user_objects([paying_to_username]).last()
 
-        LedgerTimeline.objects.create(
+        lt_object = LedgerTimeline.objects.create(
             event=LedgerTimeline.SETTLEMENT,
             credit_to=paying_to,
             debit_from=settled_by,
@@ -114,3 +126,21 @@ class ExpenseService:
             group=None,
             created_by=user,
         )
+
+        ledger_entry = ExpenseService.fetch_or_create_ledgre_entry(lt_object=lt_object)
+        ledger_entry.amount = ledger_entry.amount - amount
+        ledger_entry.save(update_fields=['amount', 'updated_at'])
+
+    def fetch_or_create_ledgre_entry(lt_object):
+        ledger_entry = Ledger.objects.filter(
+            credit_to=lt_object.credit_to,
+            debit_from=lt_object.debit_from,
+        ).last()
+
+        if ledger_entry is None:
+            ledger_entry = Ledger.objects.create(
+                credit_to=lt_object.credit_to,
+                debit_from=lt_object.debit_from,
+            )
+
+        return ledger_entry
