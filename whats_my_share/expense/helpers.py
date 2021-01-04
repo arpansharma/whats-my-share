@@ -86,3 +86,46 @@ def validate_unequally_dist_expense(validated_data):
         raise ParseError(INVALID_EXPENSE_TOTAL)
 
     return username_share_mapping
+
+
+def simplify_debts(net_balance):
+    username_share_mapping = []
+    max_creditor = max(net_balance.values())
+    max_debtor = min(net_balance.values())
+
+    usernames = list(net_balance.keys())
+    amount = list(net_balance.values())
+
+    if (max_creditor != max_debtor):
+        creditor = usernames[amount.index(max_creditor)]
+        debtor = usernames[amount.index(max_debtor)]
+
+        result = max_creditor + max_debtor
+        if result >= 0:
+            print(f"{debtor} needs to pay {creditor} : {round(abs(max_debtor), 2)}")
+            username_share_mapping.append({
+                'credit_to': creditor,
+                'debit_from': debtor,
+                'amount': round(abs(max_debtor), 2),
+            })
+
+            net_balance.pop(creditor)
+            net_balance.pop(debtor)
+            net_balance[creditor] = result
+            net_balance[debtor] = 0
+        else:
+            print(f"{debtor} needs to pay {creditor} : {round(abs(max_debtor), 2)}")
+            username_share_mapping.append({
+                'credit_to': creditor,
+                'debit_from': debtor,
+                'amount': round(abs(max_debtor), 2),
+            })
+
+            net_balance.pop(creditor)
+            net_balance.pop(debtor)
+            net_balance[creditor] = 0
+            net_balance[debtor] = result
+
+        simplify_debts(net_balance)
+
+    return username_share_mapping

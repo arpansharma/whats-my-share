@@ -13,6 +13,7 @@ from .models import Expense, LedgerTimeline, Ledger
 from .helpers import (
     validate_equally_dist_expense,
     validate_unequally_dist_expense,
+    simplify_debts,
 )
 from .constants import INVALID_TRANSACTION
 
@@ -236,3 +237,17 @@ class ExpenseService:
         if you_owe.count() != 0 or you_are_owed.count() != 0:
             return False
         return True
+
+    def simplify_debts():
+        """
+        Service that tries to reduce the number of transactions in a group
+        """
+        net_balance = {'user1': 100.00, 'user2': -100.00, 'user3': 0.00}
+        username_share_mapping = simplify_debts(net_balance=net_balance)
+        print(username_share_mapping)
+
+        """
+        username_share_mapping can be used to modify the existsing
+        balances in the Ledger model and debts would be simplified
+
+        """
