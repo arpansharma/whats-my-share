@@ -82,7 +82,7 @@ def validate_unequally_dist_expense(validated_data):
     If absolute difference between total_share and amount is greater than 1,
     it will indicate that individual shares provided are not valid.
     """
-    if abs(total_share - amount) > 1:
+    if abs(Decimal(total_share) - amount) > 1:
         raise ParseError(INVALID_EXPENSE_TOTAL)
 
     return username_share_mapping
