@@ -267,7 +267,7 @@
                   "language": "json"
                 }
               },
-              "raw": "{\n    \"title\": \"Movie\",\n    \"amount\": \"1500\",\n    \"paid_by\": \"user1\",\n    \"splitting_category\": \"by_amount\",\n    \"pre_defined_split\": [\n        {\n            \"username\": \"user1\",\n            \"split\": \"450\"\n        },\n        {\n            \"username\": \"user2\",\n            \"split\": \"450\"\n        },\n        {\n            \"username\": \"user3\",\n            \"split\": \"600\"\n        }\n    ],\n    \"group_name\": \"group_1\"\n\n}"
+              "raw": "{\n    \"title\": \"Movie\",\n    \"amount\": \"1500\",\n    \"paid_by\": \"user1\",\n    \"splitting_category\": \"by_amount\",\n    \"pre_defined_split\": [\n        {\n            \"username\": \"user1\",\n            \"split\": \"450\"\n        },\n        {\n            \"username\": \"user2\",\n            \"split\": \"450\"\n        },\n        {\n            \"username\": \"user3\",\n            \"split\": \"600\"\n        }\n    ],\n    \"group_name\": \"group1\"\n\n}"
             },
             "header": [
               {
