@@ -32,6 +32,7 @@ It mainly consists of two applications :
 # Limitations / Trade-Offs
 1. Currently the project is not configured to use environment variables with Docker but can be done in the future for more flexibility.
 2. It doesn't have the feature to simplify-debts across different groups for an individual person.
+   * [Splitwise](https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688) does it in a very efficient manner.
 3. It doesn't have the support to add profile/group picture or images for a bill.
    * In future this can be done through getting a signed URL from a file storage service such as S3,
     pushing the in-memory image to S3 and then saving the corresponsing URL in the database.
