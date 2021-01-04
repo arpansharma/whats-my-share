@@ -12,7 +12,7 @@ It mainly consists of two applications :
 
 ## Steps to run whats-my-share
 1. Clone this repository to your machine using the command `git clone git@github.com:arpansharma/whats-my-share.git`
-2. Step into the cloned repository using the command `cd whats-my-share`
+2. Step into the cloned repository using the command `cd whats-my-share/whats_my_share`
 3. Once inside the project directory :
    * run command `sudo docker-compose build` to build the docker image.
    * run command `sudo docker-compose up -d` to run the container in the background.
