@@ -23,7 +23,7 @@ It mainly consists of two applications :
     <container_id>`
 5. In order to login in to the admin dashboard :
    * run command `sudo docker-compose exec web python manage.py createsuperuser` and register with desired credentials.
-   * Navigate to [localhost](localhost:8000/admin) to login with the credentials.
+   * Navigate to [localhost](http://127.0.0.1:8000/admin/) to login with the credentials.
 6. In order to test the APIs :
    * import this [API Collection](https://github.com/arpansharma/whats-my-share/blob/main/Whats%20My%20Share.postman_collection.json) into Postman.
    * Create a user and authenticate a User in order to recieve a Token.
@@ -31,11 +31,13 @@ It mainly consists of two applications :
 
 # Limitations / Trade-Offs
 1. Currently the project is not configured to use environment variables with Docker but can be done in the future for more flexibility.
-2. It doesn't have the feature to simplify-debts across different groups for an individual person.
+2. An SSL certificate can be added to handle HTTPS traffic over more secured layer.
+   * Certificate can be obtained through [Certbot](https://certbot.eff.org/)
+3. It doesn't have the feature to simplify-debts across different groups for an individual person.
    * [Splitwise](https://medium.com/@mithunmk93/algorithm-behind-splitwises-debt-simplification-feature-8ac485e97688) does it in a very efficient manner.
-3. It doesn't have the support to add profile/group picture or images for a bill.
+4. It doesn't have the support to add profile/group picture or images for a bill.
    * In future this can be done through getting a signed URL from a file storage service such as S3,
     pushing the in-memory image to S3 and then saving the corresponsing URL in the database.
-4. Gunicorn and Nginx are not congifured to use with Docker File.
+5. Gunicorn and Nginx are not congifured to be used with Docker File.
    * We can bind gunicorn to the application port and spawn desired workers and then place Nginx on top of it to server a large number of requests.
-5. Unit Tests can be added using factory-boy and pytest for covering test-cases.
+6. Unit Tests can be added using factory-boy and pytest for covering test-cases.
