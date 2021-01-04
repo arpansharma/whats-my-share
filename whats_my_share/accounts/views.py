@@ -1,4 +1,5 @@
 # django/rest-framework imports
+from django.db import transaction
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
@@ -32,6 +33,7 @@ class UserViewSet(GenericViewSet):
     def get_serializer_class(self):
         return self.serializers[self.action]
 
+    @transaction.atomic
     @action(methods=['POST'], detail=False, url_path='register')
     def register(self, request, *args, **kwargs):
         """
@@ -85,6 +87,7 @@ class GroupViewSet(GenericViewSet):
     def get_serializer_class(self):
         return self.serializers[self.action]
 
+    @transaction.atomic
     def create(self, request, *args, **kawrgs):
         """
         API to create a group
@@ -100,6 +103,7 @@ class GroupViewSet(GenericViewSet):
             'message': 'Group has been created successfully.',
         })
 
+    @transaction.atomic
     @action(methods=['POST'], detail=False, url_path='add-members')
     def add_members(self, request, *args, **kwargs):
         """
@@ -116,6 +120,7 @@ class GroupViewSet(GenericViewSet):
             'message': 'Member(s) have been added successfully.',
         })
 
+    @transaction.atomic
     @action(methods=['POST'], detail=False, url_path='remove-members')
     def remove_members(self, request, *args, **kwargs):
         """
