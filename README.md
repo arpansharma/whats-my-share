@@ -24,6 +24,10 @@ It mainly consists of two applications :
 5. In order to login in to the admin dashboard :
    * run command `sudo docker-compose exec web python manage.py createsuperuser` and register with desired credentials.
    * Navigate to [localhost](localhost:8000/admin) to login with the credentials.
+6. In order to test the APIs :
+   * import this [API Collection](https://github.com/arpansharma/whats-my-share/blob/main/Whats%20My%20Share.postman_collection.json) into Postman.
+   * Create a user and authenticate a User in order to recieve a Token.
+   * Use that Token in all other APIs.
 
 # Limitations / Trade-Offs
 1. Currently the project is not configured to use environment variables with Docker but can be done in the future for more flexibility.
