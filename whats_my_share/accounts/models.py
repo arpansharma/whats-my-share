@@ -4,6 +4,9 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    """
+    This class represents attributes for the User model
+    """
     profile_picure = models.URLField(max_length=512, null=True, default=None)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -19,6 +22,9 @@ class User(AbstractUser):
 
 
 class Group(models.Model):
+    """
+    This class represents attributes for the Group model
+    """
     name = models.CharField(max_length=64, unique=True)
     owner = models.ForeignKey('accounts.User', related_name="owner_of_group", on_delete=models.PROTECT)
     members = models.ManyToManyField('accounts.User', related_name='member_in_group')

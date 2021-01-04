@@ -1,3 +1,4 @@
+# Error codes
 INCORRECT_PASSWORD = {
     'code': 'USR_400_1',
     'detail': 'Provided password is incorrect.',
