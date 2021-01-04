@@ -89,13 +89,23 @@ def validate_unequally_dist_expense(validated_data):
 
 
 def simplify_debts(net_balance):
+    """
+    This helper method implements the Shortest Path Algorithm
+    in context of minimizing CashFlow/Transactions in a group
+
+    net_balance is a mapping of username: total_credits - total_debits
+    """
     username_share_mapping = []
+
+    # usernames with max credit and debit
     max_creditor = max(net_balance.values())
     max_debtor = min(net_balance.values())
 
+    # lists in order to provide reverse access to keys of net_balance
     usernames = list(net_balance.keys())
     amount = list(net_balance.values())
 
+    # This condition is required because you cannot simplify with yourself
     if (max_creditor != max_debtor):
         creditor = usernames[amount.index(max_creditor)]
         debtor = usernames[amount.index(max_debtor)]
@@ -112,6 +122,8 @@ def simplify_debts(net_balance):
             net_balance.pop(creditor)
             net_balance.pop(debtor)
             net_balance[creditor] = result
+
+            # Settling the debtor
             net_balance[debtor] = 0
         else:
             print(f"{debtor} needs to pay {creditor} : {round(abs(max_debtor), 2)}")
@@ -123,6 +135,8 @@ def simplify_debts(net_balance):
 
             net_balance.pop(creditor)
             net_balance.pop(debtor)
+
+            # Settling the creditor
             net_balance[creditor] = 0
             net_balance[debtor] = result
 
