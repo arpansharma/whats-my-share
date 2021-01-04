@@ -1,0 +1,376 @@
+{
+  "info": {
+    "_postman_id": "655490d3-3d44-4dd5-b168-7283a16fa1cb",
+    "name": "Whats My Share",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "item": [
+        {
+          "name": "Register a User",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n    \"username\": \"user1\",\n    \"first_name\": \"user1\",\n    \"last_name\": \"user1\",\n    \"email\": \"user1@gmail.com\",\n    \"password\": \"abcd@123\"\n}"
+            },
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "accounts",
+                "user",
+                "register",
+                ""
+              ],
+              "raw": "{{url}}/api/v1/accounts/user/register/"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Authenticate a User",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n    \"username\": \"user1\",\n    \"password\": \"abcd@123\"\n}"
+            },
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "accounts",
+                "user",
+                "authenticate",
+                ""
+              ],
+              "raw": "{{url}}/api/v1/accounts/user/authenticate/"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create a Group",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n    \"name\": \"group1\"\n}"
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "type": "text",
+                "value": "Token e69670b43f2dd63096f990ef1760a910477bcf39"
+              }
+            ],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "accounts",
+                "group",
+                ""
+              ],
+              "raw": "{{url}}/api/v1/accounts/group/"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Members to a Group",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n    \"name\": \"group1\",\n    \"members\": [\"user1\", \"user2\", \"user3\"]\n}"
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "type": "text",
+                "value": "Token e69670b43f2dd63096f990ef1760a910477bcf39"
+              }
+            ],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "accounts",
+                "group",
+                "add-members",
+                ""
+              ],
+              "raw": "{{url}}/api/v1/accounts/group/add-members/"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Members from a Group",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n    \"name\": \"group1\",\n    \"members\": [\"user3\"]\n}"
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "type": "text",
+                "value": "Token e69670b43f2dd63096f990ef1760a910477bcf39"
+              }
+            ],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "accounts",
+                "group",
+                "remove-members",
+                ""
+              ],
+              "raw": "{{url}}/api/v1/accounts/group/remove-members/"
+            }
+          },
+          "response": []
+        }
+      ],
+      "name": "accounts"
+    },
+    {
+      "item": [
+        {
+          "name": "Adding an equally split expense",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n    \"title\": \"Movie\",\n    \"amount\": \"1000\",\n    \"paid_by\": \"user1\",\n    \"splitting_category\": \"equally\",\n    \"shared_with_users\": [\"user1\",\"user2\", \"user3\"],\n    \"group_name\": \"group1\"\n\n}"
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "type": "text",
+                "value": "Token e69670b43f2dd63096f990ef1760a910477bcf39"
+              }
+            ],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "expense",
+                ""
+              ],
+              "raw": "{{url}}/api/v1/expense/"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Adding expence by percentage",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n    \"title\": \"Movie\",\n    \"amount\": \"1500\",\n    \"paid_by\": \"user1\",\n    \"splitting_category\": \"by_percentage\",\n    \"pre_defined_split\": [\n        {\n            \"username\": \"user1\",\n            \"split\": \"30\"\n        },\n        {\n            \"username\": \"user2\",\n            \"split\": \"30\"\n        },\n        {\n            \"username\": \"user3\",\n            \"split\": \"40\"\n        }\n    ],\n    \"group_name\": \"group1\"\n\n}"
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "type": "text",
+                "value": "Token e69670b43f2dd63096f990ef1760a910477bcf39"
+              }
+            ],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "expense",
+                ""
+              ],
+              "raw": "{{url}}/api/v1/expense/"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Adding expence by amount",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n    \"title\": \"Movie\",\n    \"amount\": \"1500\",\n    \"paid_by\": \"user1\",\n    \"splitting_category\": \"by_amount\",\n    \"pre_defined_split\": [\n        {\n            \"username\": \"user1\",\n            \"split\": \"450\"\n        },\n        {\n            \"username\": \"user2\",\n            \"split\": \"450\"\n        },\n        {\n            \"username\": \"user3\",\n            \"split\": \"600\"\n        }\n    ],\n    \"group_name\": \"group_1\"\n\n}"
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "type": "text",
+                "value": "Token 4af851d38d2a206926b7302423fd9202403030a6"
+              }
+            ],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "expense",
+                ""
+              ],
+              "raw": "{{url}}/api/v1/expense/"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Settle Balance with a User",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n    \"settled_by\": \"user2\",\n    \"paying_to\": \"user1\",\n    \"amount\": \"500\",\n    \"group_name\": \"group1\"\n}"
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "type": "text",
+                "value": "Token e69670b43f2dd63096f990ef1760a910477bcf39"
+              }
+            ],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "expense",
+                "settle-balance",
+                ""
+              ],
+              "raw": "{{url}}/api/v1/expense/settle-balance/"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch Balance Amount",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "type": "text",
+                "value": "Token 4af851d38d2a206926b7302423fd9202403030a6"
+              }
+            ],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "expense",
+                "fetch-balance",
+                ""
+              ],
+              "query": [
+                {
+                  "disabled": true,
+                  "key": "group_name",
+                  "value": "group1"
+                }
+              ],
+              "raw": "{{url}}/api/v1/expense/fetch-balance/"
+            }
+          },
+          "response": []
+        }
+      ],
+      "name": "expense"
+    }
+  ]
+}
