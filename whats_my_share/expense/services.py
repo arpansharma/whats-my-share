@@ -1,7 +1,7 @@
 # python imports
 from decimal import Decimal
 
-# django / rest-framework imports
+# django/rest-framework imports
 from django.db.models import Sum
 from rest_framework.exceptions import ParseError
 
@@ -18,13 +18,20 @@ from .constants import INVALID_TRANSACTION
 
 
 class ExpenseService:
+    """
+    This class contains all the service methods for Expense model
+    """
     def add_an_expense(validated_data, user):
+        """
+        Service to add an expense to a group
+        """
         group_name = validated_data['group_name']
         splitting_category = validated_data['splitting_category']
 
         # We need to check if the group exists
         GroupService.validate_group(name=group_name)
 
+        # Bifurcating to 2 different child services based on flow
         if splitting_category == Expense.EQUALLY:
             username_share_mapping = ExpenseService.add_equally_dist_expense(
                 validated_data=validated_data, user=user,
@@ -37,6 +44,7 @@ class ExpenseService:
                 validated_data=validated_data, user=user,
             )
 
+        # Creating an expense and corresponding ledger entries
         ExpenseService.create_expense(
             validated_data=validated_data,
             username_share_mapping=username_share_mapping,
@@ -45,6 +53,9 @@ class ExpenseService:
         )
 
     def add_equally_dist_expense(validated_data, user):
+        """
+        Child Service to add an equally distributed expense
+        """
         username_share_mapping = validate_equally_dist_expense(
             validated_data=validated_data,
         )
@@ -52,6 +63,9 @@ class ExpenseService:
         return username_share_mapping
 
     def add_unequally_dist_expense(validated_data, user):
+        """
+        Child Service to add an unequally distributed expense
+        """
         username_share_mapping = validate_unequally_dist_expense(
             validated_data=validated_data,
         )
@@ -60,10 +74,12 @@ class ExpenseService:
 
     def create_expense(validated_data, username_share_mapping, user):
         """
+        Majot Service to create an expense
         """
         paid_by = validated_data['paid_by']
         group_name = validated_data['group_name']
 
+        # Since data has been already verified, we can directly retrieve them
         paid_by = UserService.retrieve_user_objects(usernames=[paid_by]).last()
         shared_with_users = UserService.retrieve_user_objects(
             usernames=list(username_share_mapping.keys()),
@@ -83,6 +99,7 @@ class ExpenseService:
 
         expense.shared_with_users.add(*shared_with_users)
 
+        # Service responsible for adding entries in the ledger
         ExpenseService.add_expense_in_ledger(
             expense=expense, username_share_mapping=username_share_mapping,
         )
@@ -90,10 +107,17 @@ class ExpenseService:
         return expense
 
     def add_expense_in_ledger(expense, username_share_mapping):
+        """
+        Child service for adding details in the ledger
+
+        username_share_mapping is a dictionary that represents how
+        much money is owed by people involved in a expense
+        """
         for username, split in username_share_mapping.items():
             debit_from = UserService.retrieve_user_objects(usernames=[username]).last()
             amount = Decimal(split)
 
+            # We are not adding an entry for self-share in the ledger
             if debit_from == expense.paid_by:
                 continue
 
@@ -112,11 +136,15 @@ class ExpenseService:
             ledger_entry.save(update_fields=['amount', 'updated_at'])
 
     def add_settlement_in_ledger(validated_data, user):
+        """
+        Service for adding a settlement in the ledger
+        """
         settled_by_username = validated_data['settled_by']
         paying_to_username = validated_data['paying_to']
         amount = validated_data['amount']
         group_name = validated_data['group_name']
 
+        # User cannot settle against himself
         if settled_by_username == paying_to_username:
             raise ParseError(INVALID_TRANSACTION)
 
@@ -139,6 +167,14 @@ class ExpenseService:
         ledger_entry.save(update_fields=['amount', 'updated_at'])
 
     def fetch_or_create_ledgre_entry(lt_object):
+        """
+        Service to maintin entries in the ledger
+
+        There will be 2 entries per user AT MAX against a group:
+            1. He will be the creditor
+            2. He will be the debtor
+        """
+
         ledger_entry = Ledger.objects.filter(
             credit_to=lt_object.credit_to,
             debit_from=lt_object.debit_from,
@@ -155,9 +191,14 @@ class ExpenseService:
         return ledger_entry
 
     def fetch_balance(validated_data, user):
+        """
+        Service to fetch balance for a user in total or for a specific group
+        """
         group_name = validated_data['group_name']
 
+        # Fetching Balance only in a specific group
         if group_name is not None:
+            # Grouping based on people he owes money
             you_owe = Ledger.objects.filter(
                 debit_from=user, group__name=group_name,
             ).values('credit_to__username').annotate(Sum('amount'))
@@ -170,6 +211,7 @@ class ExpenseService:
                 }
                 response.append(mapping)
         else:
+            # Grouping based on people he owes money
             you_owe = Ledger.objects.filter(
                 debit_from=user,
             ).values('credit_to__username').annotate(Sum('amount'))
@@ -185,6 +227,10 @@ class ExpenseService:
         return response
 
     def check_for_zero_balance(members):
+        """
+        Service to verify zero balance for a user
+        before removing a him from the requested group
+        """
         you_owe = Ledger.objects.filter(debit_from__in=members, amount__gt=0)
         you_are_owed = Ledger.objects.filter(credit_to__in=members, amount__gt=0)
         if you_owe.count() != 0 or you_are_owed.count() != 0:

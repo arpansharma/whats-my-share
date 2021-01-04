@@ -3,8 +3,8 @@ from django.db import transaction
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 # app level imports
@@ -17,6 +17,10 @@ from .services import ExpenseService
 
 
 class ExpenseViewSet(GenericViewSet):
+    """
+    This class represents the ViewSet for Expense model
+    """
+
     http_method_names = ['get', 'post']
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -32,6 +36,9 @@ class ExpenseViewSet(GenericViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
+        """
+        API to create a new expense
+        """
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid() is False:
             raise ParseError(serializer.errors)
@@ -48,6 +55,9 @@ class ExpenseViewSet(GenericViewSet):
     @transaction.atomic
     @action(methods=['POST'], detail=False, url_path='settle-balance')
     def settle_balance(self, request, *args, **kwargs):
+        """
+        API to settle balance with a user in a group
+        """
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid() is False:
             raise ParseError(serializer.errors)
@@ -63,6 +73,9 @@ class ExpenseViewSet(GenericViewSet):
 
     @action(methods=['GET'], detail=False, url_path='fetch-balance')
     def fetch_balance(self, request, *args, **kwargs):
+        """
+        API to fetch amount owed in total or in a group
+        """
         serializer = self.get_serializer(data=request.query_params)
         if serializer.is_valid() is False:
             raise ParseError(serializer.errors)

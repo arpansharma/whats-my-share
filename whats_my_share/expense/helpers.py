@@ -14,8 +14,11 @@ from .constants import INVALID_EXPENSE_TOTAL
 
 def validate_equally_dist_expense(validated_data):
     """
-    This is a helper method that checks the data provided for
+    This is a helper method that checks the data values provided for
     an equally distributed expense and returns username_share_mapping
+
+    username_share_mapping is a dictionary that represents how
+    much money is owed by people involved in a expense
 
     """
     amount = validated_data['amount']
@@ -28,6 +31,7 @@ def validate_equally_dist_expense(validated_data):
     # We need to check if usernames are part of the group
     GroupService.verify_members_in_group(name=group_name, members=shared_with_users)
 
+    # Calculating split for each user
     split = round((amount / shared_with_users.count()), 2)
 
     username_share_mapping = {user.username: split for user in shared_with_users}
@@ -40,12 +44,16 @@ def validate_unequally_dist_expense(validated_data):
     This is a helper method that checks the data provided for
     an unequally distributed expense and returns username_share_mapping
 
+    username_share_mapping is a dictionary that represents how
+    much money is owed by people involved in a expense
+
     """
 
     amount = validated_data['amount']
     splitting_category = validated_data['splitting_category']
     pre_defined_split = validated_data['pre_defined_split']
 
+    # Individual share need to be calculated if split is provided in percentage
     if splitting_category == Expense.BY_PERCENTAGE:
         username_share_mapping = {}
         for user in pre_defined_split:
@@ -71,8 +79,8 @@ def validate_unequally_dist_expense(validated_data):
 
     """
     We need to check if share for all people equals bill amount.
-    If difference between total_share and amount is greater than 1,
-    it will indicate that individual shares are not valid.
+    If absolute difference between total_share and amount is greater than 1,
+    it will indicate that individual shares provided are not valid.
     """
     if abs(total_share - amount) > 1:
         raise ParseError(INVALID_EXPENSE_TOTAL)

@@ -61,7 +61,7 @@ class CreateSerializer(serializers.Serializer):
 
 class SettleBalanceSerializer(serializers.Serializer):
     """
-    This will validate the data required to settle balance with a user
+    This will validate the data required to settle balance with a user in a group
     """
     settled_by = serializers.CharField(max_length=150, allow_null=False, allow_blank=False)
     paying_to = serializers.CharField(max_length=150, allow_null=False, allow_blank=False)
@@ -71,7 +71,7 @@ class SettleBalanceSerializer(serializers.Serializer):
 
 class FetchBalanceSerializer(serializers.Serializer):
     """
-    This will validate the data required to fetch balance for a group
+    This will validate the data required to fetch balance for a specific group
     """
     group_name = serializers.CharField(max_length=64, allow_null=False, allow_blank=False, required=False)
 
