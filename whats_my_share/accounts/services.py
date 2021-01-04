@@ -12,6 +12,7 @@ from .constants import (
     GROUP_DOES_NOT_EXISTS,
     MEMBERS_NOT_IN_GROUP,
     PERMISSION_DENIED,
+    REMAINING_TRANSACTIONS,
 )
 
 
@@ -115,4 +116,13 @@ class GroupService:
             raise ParseError(PERMISSION_DENIED)
 
         remove_members = UserService.validate_usernames(member_usernames)
+
+        # We need to check if usernames are part of the group
+        GroupService.verify_members_in_group(name=name, members=remove_members)
+
+        from expense.services import ExpenseService
+        result = ExpenseService.check_for_zero_balance(members=remove_members)
+        if result is False:
+            raise ParseError(REMAINING_TRANSACTIONS)
+
         group.members.remove(*remove_members)

@@ -32,3 +32,8 @@ PERMISSION_DENIED = {
     'code': 'USR_400_7',
     'detail': 'You are not the owner of this group.',
 }
+
+REMAINING_TRANSACTIONS = {
+    'code': 'USR_400_8',
+    'detail': 'User(s) cannot be removed due to pending transactions.',
+}

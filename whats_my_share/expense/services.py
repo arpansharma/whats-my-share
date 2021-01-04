@@ -183,3 +183,10 @@ class ExpenseService:
                 response.append(mapping)
 
         return response
+
+    def check_for_zero_balance(members):
+        you_owe = Ledger.objects.filter(debit_from__in=members, amount__gt=0)
+        you_are_owed = Ledger.objects.filter(credit_to__in=members, amount__gt=0)
+        if you_owe.count() != 0 or you_are_owed.count() != 0:
+            return False
+        return True

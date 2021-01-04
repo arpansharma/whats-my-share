@@ -69,8 +69,12 @@ def validate_unequally_dist_expense(validated_data):
     # We need to check if usernames provided are registered
     UserService.validate_usernames(usernames=usernames)
 
-    # We need to check if share of all people equals bill amount
-    if total_share < amount:
+    """
+    We need to check if share for all people equals bill amount.
+    If difference between total_share and amount is greater than 1,
+    it will indicate that individual shares are not valid.
+    """
+    if abs(total_share - amount) > 1:
         raise ParseError(INVALID_EXPENSE_TOTAL)
 
     return username_share_mapping
