@@ -21,7 +21,9 @@ It mainly consists of two applications :
    * run command `sudo docker ps -a` to list all the running containers.
    * Grab the `<container_id>` for which you need to see the logs and run command `sudo docker logs -f
     <container_id>`
-
+5. In order to login in to the admin dashboard :
+   * run command `sudo docker-compose exec web python manage.py createsuperuser` and register with desired credentials.
+   * Navigate to [localhost](localhost:8000/admin) to login with the credentials.
 
 # Limitations / Trade-Offs
 1. Currently the project is not configured to use environment variables with Docker but can be done in the future for more flexibility.
