@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'whats_my_share.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 # It can be parametrised using env variables when using in production
-DATABASES = {
+CONTAINER_DATABASE = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
@@ -100,6 +100,18 @@ DATABASES = {
     },
 }
 
+LOCAL_DATABASE = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'shared_expenses',
+        'USER': 'admin',
+        'PASSWORD': '4.^Admin$$',
+        'HOST': '127.0.0.1',
+        'PORT': 5432,
+    },
+}
+
+DATABASES = CONTAINER_DATABASE
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
