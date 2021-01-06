@@ -14,6 +14,7 @@ from .helpers import (
     validate_equally_dist_expense,
     validate_unequally_dist_expense,
     simplify_debts,
+    construct_netbalance,
 )
 from .constants import INVALID_TRANSACTION
 
@@ -180,6 +181,7 @@ class ExpenseService:
             credit_to=lt_object.credit_to,
             debit_from=lt_object.debit_from,
             group=lt_object.group,
+            is_active=True,
         ).last()
 
         if ledger_entry is None:
@@ -201,7 +203,7 @@ class ExpenseService:
         if group_name is not None:
             # Grouping based on people he owes money
             you_owe = Ledger.objects.filter(
-                debit_from=user, group__name=group_name,
+                debit_from=user, group__name=group_name, is_active=True,
             ).values('credit_to__username').annotate(Sum('amount'))
 
             response = []
@@ -214,7 +216,7 @@ class ExpenseService:
         else:
             # Grouping based on people he owes money
             you_owe = Ledger.objects.filter(
-                debit_from=user,
+                debit_from=user, is_active=True,
             ).values('credit_to__username').annotate(Sum('amount'))
 
             response = []
@@ -232,22 +234,33 @@ class ExpenseService:
         Service to verify zero balance for a user
         before removing a him from the requested group
         """
-        you_owe = Ledger.objects.filter(debit_from__in=members, amount__gt=0)
-        you_are_owed = Ledger.objects.filter(credit_to__in=members, amount__gt=0)
+        you_owe = Ledger.objects.filter(debit_from__in=members, is_active=True, amount__gt=0)
+        you_are_owed = Ledger.objects.filter(credit_to__in=members, is_active=True, amount__gt=0)
         if you_owe.count() != 0 or you_are_owed.count() != 0:
             return False
         return True
 
-    def simplify_debts():
+    def simplify_debts(validated_data):
         """
         Service that tries to reduce the number of transactions in a group
         """
-        net_balance = {'user1': 100.00, 'user2': -100.00, 'user3': 0.00}
+        group_name = validated_data['group_name']
+        group = GroupService.retrieve_group_object(name=group_name)
+
+        all_transactions = Ledger.objects.filter(group=group, is_active=True)
+
+        net_balance = construct_netbalance(all_transactions)
         username_share_mapping = simplify_debts(net_balance=net_balance)
-        print(username_share_mapping)
 
-        """
-        username_share_mapping can be used to modify the existsing
-        balances in the Ledger model and debts would be simplified
+        # Marking old transactions as inactive and creating new ones
+        all_transactions.update(is_active=False)
 
-        """
+        for txn in username_share_mapping:
+            credit_to = UserService.retrieve_user_objects(usernames=[txn['credit_to']]).last()
+            debit_from = UserService.retrieve_user_objects(usernames=[txn['debit_from']]).last()
+            Ledger.objects.create(
+                credit_to=credit_to,
+                debit_from=debit_from,
+                amount=txn['amount'],
+                group=group,
+            )

@@ -88,6 +88,43 @@ def validate_unequally_dist_expense(validated_data):
     return username_share_mapping
 
 
+def construct_netbalance(all_transactions):
+    """
+    This helper method first constructs a mapping of each user
+    along with the credits and debits and then calculates the
+    net balance by subtracting debits from the credits of a user
+
+    """
+    username_credit_debts_mapping = {}
+
+    for transaction in all_transactions:
+        creditor = transaction.credit_to
+        debitor = transaction.debit_from
+        amount = transaction.amount
+
+        # Mapping all credits
+        if username_credit_debts_mapping.get(creditor.username) is None:
+            username_credit_debts_mapping[creditor.username] = {}
+        if username_credit_debts_mapping[creditor.username].get('credit') is None:
+            username_credit_debts_mapping[creditor.username]['credit'] = 0
+        username_credit_debts_mapping[creditor.username]['credit'] += amount
+
+        # Mapping all debits
+        if username_credit_debts_mapping.get(debitor.username) is None:
+            username_credit_debts_mapping[debitor.username] = {}
+        if username_credit_debts_mapping[debitor.username].get('debit') is None:
+            username_credit_debts_mapping[debitor.username]['debit'] = 0
+        username_credit_debts_mapping[debitor.username]['debit'] += amount
+
+    # Calculating net_balance for all usernames
+    net_balance = {
+        user: (txns.get('credit', 0) - txns.get('debit', 0))
+        for user, txns in username_credit_debts_mapping.items()
+    }
+
+    return net_balance
+
+
 def simplify_debts(net_balance):
     """
     This helper method implements the Shortest Path Algorithm
