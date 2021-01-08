@@ -81,3 +81,10 @@ class FetchBalanceSerializer(serializers.Serializer):
         return {
             'group_name': group_name,
         }
+
+
+class SimplifyDebtsSerializer(serializers.Serializer):
+    """
+    This will validate the data required to simplify debts for a specific group
+    """
+    group_name = serializers.CharField(max_length=64, allow_null=False, allow_blank=False)

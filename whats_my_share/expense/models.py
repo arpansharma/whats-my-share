@@ -70,6 +70,7 @@ class Ledger(models.Model):
     amount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     group = models.ForeignKey('accounts.Group', related_name="group_ld", on_delete=models.PROTECT)
 
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

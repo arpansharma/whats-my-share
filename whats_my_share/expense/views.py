@@ -12,6 +12,7 @@ from .serializers import (
     CreateSerializer,
     SettleBalanceSerializer,
     FetchBalanceSerializer,
+    SimplifyDebtsSerializer,
 )
 from .services import ExpenseService
 
@@ -29,6 +30,7 @@ class ExpenseViewSet(GenericViewSet):
         "create": CreateSerializer,
         "settle_balance": SettleBalanceSerializer,
         "fetch_balance": FetchBalanceSerializer,
+        "simplify": SimplifyDebtsSerializer,
     }
 
     def get_serializer_class(self):
@@ -86,3 +88,22 @@ class ExpenseViewSet(GenericViewSet):
         )
 
         return Response(response)
+
+    @transaction.atomic
+    @action(methods=['POST'], detail=False, url_path='simplify')
+    def simplify(self, request, *args, **kwargs):
+        """
+        API to simplify debts in a group
+        """
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid() is False:
+            raise ParseError(serializer.errors)
+
+        ExpenseService.simplify_debts(
+            validated_data=serializer.validated_data,
+        )
+
+        return Response({
+            'message': 'Debts have been simplified',
+        })

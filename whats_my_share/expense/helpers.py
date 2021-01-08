@@ -86,3 +86,97 @@ def validate_unequally_dist_expense(validated_data):
         raise ParseError(INVALID_EXPENSE_TOTAL)
 
     return username_share_mapping
+
+
+def construct_netbalance(all_transactions):
+    """
+    This helper method first constructs a mapping of each user
+    along with the credits and debits and then calculates the
+    net balance by subtracting debits from the credits of a user
+
+    """
+    username_credit_debts_mapping = {}
+
+    for transaction in all_transactions:
+        creditor = transaction.credit_to
+        debitor = transaction.debit_from
+        amount = transaction.amount
+
+        # Mapping all credits
+        if username_credit_debts_mapping.get(creditor.username) is None:
+            username_credit_debts_mapping[creditor.username] = {}
+        if username_credit_debts_mapping[creditor.username].get('credit') is None:
+            username_credit_debts_mapping[creditor.username]['credit'] = 0
+        username_credit_debts_mapping[creditor.username]['credit'] += amount
+
+        # Mapping all debits
+        if username_credit_debts_mapping.get(debitor.username) is None:
+            username_credit_debts_mapping[debitor.username] = {}
+        if username_credit_debts_mapping[debitor.username].get('debit') is None:
+            username_credit_debts_mapping[debitor.username]['debit'] = 0
+        username_credit_debts_mapping[debitor.username]['debit'] += amount
+
+    # Calculating net_balance for all usernames
+    net_balance = {
+        user: (txns.get('credit', 0) - txns.get('debit', 0))
+        for user, txns in username_credit_debts_mapping.items()
+    }
+
+    return net_balance
+
+
+def simplify_debts(net_balance):
+    """
+    This helper method implements the Shortest Path Algorithm
+    in context of minimizing CashFlow/Transactions in a group
+
+    net_balance is a mapping of username: total_credits - total_debits
+    """
+    username_share_mapping = []
+
+    # usernames with max credit and debit
+    max_creditor = max(net_balance.values())
+    max_debtor = min(net_balance.values())
+
+    # lists in order to provide reverse access to keys of net_balance
+    usernames = list(net_balance.keys())
+    amount = list(net_balance.values())
+
+    # This condition is required because you cannot simplify with yourself
+    if (max_creditor != max_debtor):
+        creditor = usernames[amount.index(max_creditor)]
+        debtor = usernames[amount.index(max_debtor)]
+
+        result = max_creditor + max_debtor
+        if result >= 0:
+            print(f"{debtor} needs to pay {creditor} : {round(abs(max_debtor), 2)}")
+            username_share_mapping.append({
+                'credit_to': creditor,
+                'debit_from': debtor,
+                'amount': round(abs(max_debtor), 2),
+            })
+
+            net_balance.pop(creditor)
+            net_balance.pop(debtor)
+            net_balance[creditor] = result
+
+            # Settling the debtor
+            net_balance[debtor] = 0
+        else:
+            print(f"{debtor} needs to pay {creditor} : {round(abs(max_debtor), 2)}")
+            username_share_mapping.append({
+                'credit_to': creditor,
+                'debit_from': debtor,
+                'amount': round(abs(max_debtor), 2),
+            })
+
+            net_balance.pop(creditor)
+            net_balance.pop(debtor)
+
+            # Settling the creditor
+            net_balance[creditor] = 0
+            net_balance[debtor] = result
+
+        simplify_debts(net_balance)
+
+    return username_share_mapping
