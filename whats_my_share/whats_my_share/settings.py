@@ -111,7 +111,7 @@ LOCAL_DATABASE = {
     },
 }
 
-DATABASES = CONTAINER_DATABASE
+DATABASES = LOCAL_DATABASE
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
