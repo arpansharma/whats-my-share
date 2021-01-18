@@ -81,3 +81,22 @@ class Ledger(models.Model):
         app_label = 'expense'
         db_table = 'api_ledger'
         verbose_name_plural = 'Ledger'
+
+
+class LedgerSimplified(models.Model):
+    credit_to = models.ForeignKey('accounts.user', related_name="credit_to_lds", on_delete=models.PROTECT)
+    debit_from = models.ForeignKey('accounts.user', related_name="debit_from_lds", on_delete=models.PROTECT)
+    amount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    group = models.ForeignKey('accounts.Group', related_name="group_lds", on_delete=models.PROTECT)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.id}'
+
+    class Meta:
+        app_label = 'expense'
+        db_table = 'api_ledger_simplified'
+        verbose_name_plural = 'Ledger Simplified'

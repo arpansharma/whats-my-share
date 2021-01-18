@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # app level imports
-from .models import Expense, LedgerTimeline, Ledger
+from .models import Expense, LedgerTimeline, Ledger, LedgerSimplified
 
 
 @admin.register(Expense)
@@ -45,6 +45,20 @@ class LedgerTimelineAdmin(admin.ModelAdmin):
 
 @admin.register(Ledger)
 class LedgerAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'credit_to',
+        'debit_from',
+        'amount',
+        'group',
+        'is_active',
+        'created_at',
+        'updated_at',
+    )
+
+
+@admin.register(LedgerSimplified)
+class LedgerSimplifiedAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'credit_to',

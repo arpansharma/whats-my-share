@@ -29,6 +29,7 @@ class Group(models.Model):
     owner = models.ForeignKey('accounts.User', related_name="owner_of_group", on_delete=models.PROTECT)
     members = models.ManyToManyField('accounts.User', related_name='member_in_group')
     profile_picure = models.URLField(max_length=512, null=True, default=None)
+    simplify_debts = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
